@@ -4,3 +4,6 @@
 [submodule "libs"]
 	path = libs
 	url = https://github.com/giswater/libs.git
+[submodule "dependencies/swmm_api"]
+	path = dependencies/swmm_api
+	url = https://gitlab.com/markuspichler/swmm_api.git
