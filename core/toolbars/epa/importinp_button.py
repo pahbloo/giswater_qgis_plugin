@@ -2,12 +2,14 @@ from datetime import timedelta
 from functools import partial
 from pathlib import Path
 from sip import isdeleted
-from time import sleep, time
+from time import time
 
+from qgis.core import QgsApplication
 from qgis.PyQt.QtCore import QTimer
 from qgis.PyQt.QtWidgets import QFileDialog, QLabel
 
 from ..dialog import GwAction
+from ...threads.inp_reader import GwInpReaderTask
 from ...ui.ui_manager import GwInpParsingUi, GwInpConfigImportUi
 from ...utils import tools_gw
 from .... import global_vars
@@ -56,6 +58,11 @@ class GwImportInp(GwAction):
         )
         self.timer.start(1000)
 
+        self.reader_task = GwInpReaderTask("description", file_path)
+        self.reader_task.taskCompleted.connect(self.dlg_inp_parsing.close)
+        QgsApplication.taskManager().addTask(self.reader_task)
+        QgsApplication.taskManager().triggerTask(self.reader_task)
+        
     def _calculate_elapsed_time(self, dialog):
         tf = time()  # Final time
         td = tf - self.t0  # Delta time
